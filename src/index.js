@@ -1,14 +1,22 @@
 const { convertArrayToCSV } = require('convert-array-to-csv');
 const converter = require('convert-array-to-csv');
+const JSZip = require('jszip');
+const zip = new JSZip();
 
 const TQ = document.getElementById('TQ');
 const main = document.getElementById('main');
 const createQForm = document.getElementById('create-question');
-const generated = [];
+const generateBtn = document.getElementById('generateBtn');
 const header = ['Query', 'Answer'];
+var generation = 0;
 
 createQForm.onsubmit = addQHandler;
-main.onsubmit = generateHandler;
+main.onsubmit = onSubmit;
+
+generateBtn.onclick = generateHandler;
+
+
+setTimeout(() => randomizeAnswer(), 1000);
 
 addQuestion('This is a template question', ['Make a new question', 'by filling the form', 'below. :3'])
 
@@ -56,31 +64,55 @@ function addQHandler(e) {
   addQuestion(question, answerList);
 }
 
-function generateHandler(e) {
-  e.preventDefault();
+function randomizeAnswer() {
+  let questionWrappers = document.querySelectorAll('.wrapper');
+  for(const w of questionWrappers) {
+    let answers = w.querySelectorAll('.answer');
+    let index = Math.floor(Math.random() * answers.length);
+    answers[index].checked = true;
+  }
+}
+
+function generateHandler() {
   if(main.childElementCount) {
-    let data = new FormData(main);
-    let acc = 0;
-    let stored = []
-    for(const entry of data.values()) {
-      if(!(acc % 2)) 
-        stored.push([])
-      stored[stored.length - 1].push(entry);
-      ++acc;
+    console.log('clicked!')
+    let amount = parseInt(window.prompt('Generate Amount: ', '0'));
+
+    for(let i = 0; i < amount; ++i) {
+      randomizeAnswer();
+      main.requestSubmit();
     }
-    console.log([stored, header]);
-    let csvFile = "data:text/csv;charset=utf-8," + encodeURI(convertArrayToCSV(stored,{header})); 
-    let a = document.createElement('a');
-    a.href = csvFile;
-    a.download = "test.csv";
-    document.body.appendChild(a);
-    a.click();
-    document.body.removeChild(a);
-    
-    generated.push(stored);
+    zip.generateAsync({type: "base64"}).then((URI) => {
+      // Link Injection
+      let a = document.createElement('a');
+      a.href = "data:application/zip;base64,"+URI;
+      a.download = "surveys.zip";
+      document.body.appendChild(a);
+      a.click();
+      document.body.removeChild(a);
+    });
   } else {
     alert('You need to have atleast one question!');
   }
+}
+
+function onSubmit(e) {
+  e.preventDefault();
+
+  let data = new FormData(main);
+  let acc = 0;
+  let stored = []
+  for(const entry of data.values()) {
+    if(!(acc % 2)) 
+      stored.push([])
+    stored[stored.length - 1].push(entry);
+    ++acc;
+  }
+
+  let csvFile = convertArrayToCSV(stored,{header}); 
+  zip.file(`${generation}.csv`, csvFile)
+  ++generation;
+  console.log(csvFile);
 }
 
 function moveTop(element) {
