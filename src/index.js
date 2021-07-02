@@ -1,25 +1,49 @@
+window.indexedDB = window.indexedDB || window.mozIndexedDB || window.webkitIndexedDB || window.msIndexedDB;
+window.IDBTransaction = window.IDBTransaction || window.webkitIDBTransaction || window.msIDBTransaction || {READ_WRITE: "readwrite"}; 
+window.IDBKeyRange = window.IDBKeyRange || window.webkitIDBKeyRange || window.msIDBKeyRange;
+
+const dbName = "surgen";
+const requestdb = window.indexedDB.open(dbName, 3); 
 const { convertArrayToCSV } = require('convert-array-to-csv');
 const converter = require('convert-array-to-csv');
 const JSZip = require('jszip');
 const zip = new JSZip();
-
 const TQ = document.getElementById('TQ');
 const main = document.getElementById('main');
 const createQForm = document.getElementById('create-question');
 const generateBtn = document.getElementById('generateBtn');
 const header = ['Query', 'Answer'];
+
 var generation = 0;
+var db = null;
+
+requestdb.onerror = function(event) {
+  console.error(`Database error: ${event.target.errorCode}`);
+};
+requestdb.onsuccess = function(event) {
+  db = event.target.result;
+};
+
+requestdb.onupgradeneeded = function(event) {
+  db = event.target.result; 
+  var objectStore = db.createObjectStore('queries', {autoIncrement: true});
+};
 
 createQForm.onsubmit = addQHandler;
 main.onsubmit = onSubmit;
-
 generateBtn.onclick = generateHandler;
 
+//addQuestion('This is a template question', ['Make a new question', 'by filling the form', 'below. :3'])
 
-setTimeout(() => randomizeAnswer(), 1000);
+function insertQuery(db, questionContent, choiceContents) {
+  let trans = db.transaction(['queries'], 'readwrite');
+  let store = trans.objectStore('queries');
 
-addQuestion('This is a template question', ['Make a new question', 'by filling the form', 'below. :3'])
-
+  let query = {questionContent, choiceContents};
+  store.add(query);
+  trans.oncomplete = function() { console.log('info: query added to db'); }
+  trans.onerror = function(event) { alert('error storing query ' + event.target.errorCode);};
+}
 
 function addQuestion(questionContent, choiceContents) {
   let TQClone = TQ.content.firstElementChild.cloneNode(true);
@@ -49,7 +73,7 @@ function addQuestion(questionContent, choiceContents) {
     choice.parentNode.firstElementChild.setAttribute('name', choiceName);
   });
 
-
+  insertQuery(db, questionContent, choiceContents);
   main.appendChild(TQClone);
 }
 
@@ -75,7 +99,6 @@ function randomizeAnswer() {
 
 function generateHandler() {
   if(main.childElementCount) {
-    console.log('clicked!')
     let amount = parseInt(window.prompt('Generate Amount: ', '0'));
 
     for(let i = 0; i < amount; ++i) {
@@ -112,7 +135,6 @@ function onSubmit(e) {
   let csvFile = convertArrayToCSV(stored,{header}); 
   zip.file(`${generation}.csv`, csvFile)
   ++generation;
-  console.log(csvFile);
 }
 
 function moveTop(element) {
