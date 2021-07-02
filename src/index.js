@@ -4,14 +4,13 @@ const converter = require('convert-array-to-csv');
 const TQ = document.getElementById('TQ');
 const main = document.getElementById('main');
 const createQForm = document.getElementById('create-question');
+const generated = [];
+const header = ['Query', 'Answer'];
 
 createQForm.onsubmit = addQHandler;
 main.onsubmit = generateHandler;
 
-addQuestion('It is a long established fact that a reader will be distracted by the readable content of a page when looking at its layout. The point of using Lorem Ipsum is that it has a more-or-less normal distribution of letters, as opposed to using Content here, content here, making it look like readable English. Many desktop publishing packages and web page editors now use Lorem Ipsum as their default model text, and a search for lorem ipsum will uncover many web sites still in their infancy. Various versions have evolved over the years, sometimes by accident, sometimes on purpose (injected humour and the like).', ['a', 'b', 'c'])
-addQuestion('It is a long established fact that a reader will be distracted by the readable content of a page when looking at its layout. The point of using Lorem Ipsum is that it has a more-or-less normal distribution of letters, as opposed to using Content here, content here, making it look like readable English. Many desktop publishing packages and web page editors now use Lorem Ipsum as their default model text, and a search for lorem ipsum will uncover many web sites still in their infancy. Various versions have evolved over the years, sometimes by accident, sometimes on purpose (injected humour and the like).', ['a', 'b', 'c'])
-addQuestion('hello world?', ['asdasdasdsadsaa', 'b', 'c'])
-addQuestion('It is a lonaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaag established fact that a reader will be distracted by the readable content of a page when looking at its layout. The point of using Lorem Ipsum is that it has a more-or-less normal distribution of letters, as opposed to using Content here, content here, making it look like readable English. Many desktop publishing packages and web page editors now use Lorem Ipsum as their default model text, and a search for lorem ipsum will uncover many web sites still in their infancy. Various versions have evolved over the years, sometimes by accident, sometimes on purpose (injected humour and the like).', ['a', 'b', 'c'])
+addQuestion('This is a template question', ['Make a new question', 'by filling the form', 'below. :3'])
 
 
 function addQuestion(questionContent, choiceContents) {
@@ -19,21 +18,27 @@ function addQuestion(questionContent, choiceContents) {
   let buttonTop = TQClone.querySelector('.up');
   let buttonBottom = TQClone.querySelector('.bottom');
   let question = TQClone.querySelector('.question') 
+  let query = TQClone.querySelector('.q-query');
+  let qIndexes = TQClone.querySelectorAll('.q-index');
   let choices = TQClone.querySelectorAll('.q-choice');
   let answersInput = TQClone.querySelectorAll('.answer');
   let close = TQClone.querySelector('.close');
-  let name = `choice-${main.childElementCount}`;
+
+  let choiceName = `choice-${main.childElementCount}`;
+  //let questionName = `question-${main.childElementCount}`;
 
   buttonTop.onclick = () => moveTop(TQClone);
   buttonBottom.onclick = () => moveBottom(TQClone);
   close.onclick = function() { this.parentNode.remove(); };
 
   question.textContent = questionContent;
+  query.value = questionContent;
+
   choices.forEach((choice, index) => {
     choice.textContent = choiceContents[index];
-    answersInput[index].value = choiceContents[index];
+    answersInput[index].value = `${qIndexes[index].textContent}. ${choiceContents[index]}`;
     // Name Mangling for each choices
-    choice.parentNode.firstElementChild.setAttribute('name', name);
+    choice.parentNode.firstElementChild.setAttribute('name', choiceName);
   });
 
 
@@ -55,7 +60,24 @@ function generateHandler(e) {
   e.preventDefault();
   if(main.childElementCount) {
     let data = new FormData(main);
-    let answers = Array.from(data.values());
+    let acc = 0;
+    let stored = []
+    for(const entry of data.values()) {
+      if(!(acc % 2)) 
+        stored.push([])
+      stored[stored.length - 1].push(entry);
+      ++acc;
+    }
+    console.log([stored, header]);
+    let csvFile = "data:text/csv;charset=utf-8," + encodeURI(convertArrayToCSV(stored,{header})); 
+    let a = document.createElement('a');
+    a.href = csvFile;
+    a.download = "test.csv";
+    document.body.appendChild(a);
+    a.click();
+    document.body.removeChild(a);
+    
+    generated.push(stored);
   } else {
     alert('You need to have atleast one question!');
   }
