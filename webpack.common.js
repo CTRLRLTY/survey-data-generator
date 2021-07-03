@@ -28,8 +28,6 @@ const optimization = {
 }
 
 module.exports = {
-  mode: 'development',
-  devtool: 'eval-source-map',
   entry: './src/index.js',
   plugins,
   optimization,

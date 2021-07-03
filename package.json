@@ -4,7 +4,8 @@
   "description": "",
   "private": true,
   "scripts": {
-    "build": "webpack",
+    "build": "webpack --config webpack.dev.js",
+    "publish": "webpack --config webpack.prod.js",
     "watch": "webpack --watch"
   },
   "keywords": [],
@@ -13,7 +14,8 @@
   "devDependencies": {
     "html-webpack-plugin": "^5.3.2",
     "webpack": "^5.41.1",
-    "webpack-cli": "^4.7.2"
+    "webpack-cli": "^4.7.2",
+    "webpack-merge": "^5.8.0"
   },
   "dependencies": {
     "convert-array-to-csv": "^2.0.0",
