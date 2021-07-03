@@ -159,22 +159,15 @@ function onSubmit(e) {
 
 function moveTop(element) {
   let sibling = element.previousElementSibling;
-  if(sibling) {
-    let siblingIdx = parseInt(sibling.getAttribute('data-idx'));
-    let thisIdx = parseInt(element.getAttribute('data-idx'));
-
+  if(sibling) 
     sibling.before(element);
-    console.log(thisIdx);
-  }
+  
 }
 
 function moveBottom(element) {
   let sibling = element.nextElementSibling;
-  if(sibling) {
-    let siblingIdx = parseInt(sibling.getAttribute('data-idx'));
-    let thisIdx = parseInt(element.getAttribute('data-idx'));
+  if(sibling) 
     sibling.after(element);
-  }
 }
 
 function extractMain() {
@@ -201,10 +194,9 @@ function clearData(storeName) {
 
 async function saveHandle() {
   await clearData('queries');
-  for (const {questionContent, choiceContents} of extractMain()) {
-    console.log(choiceContents);
+  for (const {questionContent, choiceContents} of extractMain()) 
     insertQuery(db, questionContent, choiceContents);
-  }
+  
 
   alert('Data Saved!');
 }
