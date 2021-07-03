@@ -7,6 +7,6 @@ module.exports = merge(common, {
   devtool: 'source-map',
   output: {
     path: path.resolve(__dirname, 'docs'),
-    publicPath: '/docs/',
+    publicPath: '/survey-data-generator/',
   },
 });
