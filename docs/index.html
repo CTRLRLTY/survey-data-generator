@@ -1,0 +1,81 @@
+<!doctype html><html><head><title>Survey Generator</title><meta charset="UTF-8"><style>* {
+        text-align: justify;
+        box-sizing: border-box;
+      }
+
+      #main {
+        margin-bottom: 40px;
+      }
+
+      #main > .wrapper {
+        position: relative;
+      }
+
+      #main fieldset > legend {
+        position: relative;
+      }
+
+      #main fieldset > * {
+        margin-bottom: 0.7rem;
+      }
+
+      .close {
+        font-size: 2rem;
+        text-align: center;
+        position: absolute;
+        right: 18px;
+        bottom: 20px;
+        z-index: 2;
+        width: 0;
+        height: 0;
+        display: inline-block;
+        cursor: pointer;
+      }
+
+      .rp-container {
+        position: absolute;
+        display: flex;
+        left: -22px;
+        flex-direction: column;
+        gap: 20px;
+        font-size: 30px;
+      }
+
+      .rp-container > span {
+        cursor: pointer;
+      }
+
+      textarea {
+        resize: none;
+      }
+
+      fieldset {
+        border-color: black;
+      }
+
+      .question {
+        display: block;
+        border-style: solid;
+        border-color: black;
+        border-width: 3px;
+        margin-top: -2px;
+        padding: 20px;
+      }
+      label {
+        display: block;
+      }
+
+      #create-question {
+        width: 20vw;
+      }
+      #create-question input, #create-question textarea {
+        width: 100%;
+      }
+
+      .submit-container {
+        margin-top: 20px;
+        margin-bottom: 5px;
+        display: flex;
+        justify-content: center;
+        gap: 10px;
+      }</style><script defer="defer" src="/docs/runtime.2002c62286a6496d036e.js"></script><script defer="defer" src="/docs/npm.convert-array-to-csv.4854c58c8a30d0673868.js"></script><script defer="defer" src="/docs/npm.jszip.f971ed772565882cf65e.js"></script><script defer="defer" src="/docs/main.2e09dfae51e191d3b9bd.js"></script></head><body><template id="TQ"><div class="wrapper"><fieldset><legend><div class="rp-container"><span class="up">▲</span> <span class="bottom">▼</span></div><textarea style="display: none;" name="query" class="q-query"></textarea><p class="question">helloooo</p></legend><label><input type="radio" class="answer"> <span class="q-index">A</span>. <span class="q-choice">hello</span></label> <label><input type="radio" class="answer"> <span class="q-index">B</span>. <span class="q-choice">hello</span></label> <label><input type="radio" class="answer"> <span class="q-index">C</span>. <span class="q-choice">hello</span></label></fieldset><span class="close">✖</span></div></template><form id="main"></form><form id="create-question" style="margin: auto;"><fieldset><label for="QADD"><p>Question:</p></label> <textarea rows="4" id="QADD" name="question"></textarea> <label><p>A - Answer:</p><input name="answer"></label> <label><p>B - Answer:</p><input name="answer"></label> <label><p>C - Answer:</p><input name="answer"></label><div class="submit-container"><button type="submit" form="create-question">Add Question</button> <button type="button" id="generateBtn">Generate CSV</button> <button type="button" id="saveBtn">Save</button></div></fieldset></form></body></html>
