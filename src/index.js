@@ -5,6 +5,7 @@ const JSZip = require('jszip');
 const zip = new JSZip();
 const TQ = document.getElementById('TQ');
 const main = document.getElementById('main');
+const createAnsBtn = document.getElementById('create-answer');
 const createQForm = document.getElementById('create-question');
 const generateBtn = document.getElementById('generateBtn');
 const saveBtn = document.getElementById('saveBtn');
@@ -18,6 +19,7 @@ requestdb.onerror = function(event) {
   alert(`Database error: ${event.target.errorCode}`);
   db = null;
 };
+
 
 requestdb.onsuccess = function(event) {
   db = event.target.result;
@@ -46,15 +48,19 @@ requestdb.onsuccess = function(event) {
   };
 };
 
+
 requestdb.onupgradeneeded = function(event) {
   db = event.target.result; 
   let queries = db.objectStoreNames.contains('queries') ? requestdb.transaction.objectStore('queries') : db.createObjectStore('queries', {autoIncrement: true});
 };
 
+
+createAnsBtn.onclick = addAnswerHandler;
 createQForm.onsubmit = addQHandler;
 main.onsubmit = onSubmit;
 generateBtn.onclick = generateHandler;
 saveBtn.onclick = saveHandle;
+
 
 function insertQuery(db, questionContent, choiceContents) {
   if (db) {
@@ -66,18 +72,44 @@ function insertQuery(db, questionContent, choiceContents) {
   }
 }
 
+
+function addAnswerHandler(e) {
+  const fieldset = document.getElementById("fieldset");
+  const submitContainer = document.getElementsByClassName("submit-container")[0];
+  const template = document.getElementById("answer-input");
+  const content = template.content;
+  const answerInput = content.cloneNode(true);
+  const indexSpan = answerInput.querySelector("span");
+  const answerCount = fieldset.querySelectorAll("input[name=answer]").length;
+  indexSpan.innerText = "" + answerCount;
+
+
+  fieldset.insertBefore(answerInput, submitContainer);
+}
+
+
 function addQuestion(hostElement, questionContent, choiceContents) {
   let TQClone = TQ.content.firstElementChild.cloneNode(true);
   let buttonTop = TQClone.querySelector('.up');
   let buttonBottom = TQClone.querySelector('.bottom');
   let question = TQClone.querySelector('.question') 
   let query = TQClone.querySelector('.q-query');
-  let qIndexes = TQClone.querySelectorAll('.q-index');
-  let choices = TQClone.querySelectorAll('.q-choice');
-  let answersInput = TQClone.querySelectorAll('.answer');
   let close = TQClone.querySelector('.close');
   let idx = main.childElementCount;
   let choiceName = `choice-${idx}`;
+
+
+  let answerChoice = document.getElementById("answer-choice");
+  let fieldset = TQClone.querySelector("fieldset");
+
+  for(i = 0; i < choiceContents.length; ++i) {
+    let ac = answerChoice.content.cloneNode(true);
+    let indexSpan = ac.querySelector(".q-index");
+    let choiceSpan = ac.querySelector(".q-choice");
+    indexSpan.innerText = i;
+    choiceSpan.innerText = choiceContents[i];
+    fieldset.appendChild(ac);
+  }
 
   TQClone.setAttribute('data-idx', idx);
   buttonTop.onclick = () => moveTop(TQClone);
@@ -86,6 +118,11 @@ function addQuestion(hostElement, questionContent, choiceContents) {
 
   question.textContent = questionContent;
   query.value = questionContent;
+
+
+  let qIndexes = TQClone.querySelectorAll('.q-index');
+  let choices = TQClone.querySelectorAll('.q-choice');
+  let answersInput = TQClone.querySelectorAll('.answer');
 
   choices.forEach((choice, index) => {
     choice.textContent = choiceContents[index];

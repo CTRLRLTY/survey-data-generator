@@ -100,7 +100,7 @@
             <textarea style="display: none;" name="query" class="q-query"></textarea>
             <p class="question">helloooo</p>
           </legend>
-          <label>
+          <!-- <label>
             <input type="radio" class="answer">
             <span class="q-index">A</span>. <span class="q-choice">hello</span>
           </label>
@@ -111,19 +111,31 @@
           <label>
             <input type="radio" class="answer">
             <span class="q-index">C</span>. <span class="q-choice">hello</span>
-          </label>
+          </label> -->
         </fieldset>
         <span class="close">✖</span>
       </div>
     </template>
+    <template id="answer-choice">
+      <label>
+        <input type="radio" class="answer">
+        <span class="q-index">$</span>. <span class="q-choice">hello</span>
+      </label>
+    </template>
+    <template id="answer-input">
+      <label>
+        <p><span name="index">$</span> - Answer:</p>
+        <input type="text" name="answer">
+      </label>
+    </template>
     <form id="main"></form>
     <form id="create-question" style="margin: auto;">
-      <fieldset> 
+      <fieldset id="fieldset"> 
         <label for="QADD">
           <p>Question:</p>
         </label>
         <textarea rows="4" id="QADD" name="question"></textarea>
-        <label>
+        <!-- <label>
           <p>A - Answer:</p>
           <input type="text" name="answer">
         </label>
@@ -134,8 +146,9 @@
         <label>
           <p>C - Answer:</p>
           <input type="text" name="answer">
-        </label>
+        </label> -->
         <div class="submit-container">
+          <button type="button" id="create-answer">Add answer</button>
           <button type="submit" form="create-question">Add Question</button>
           <button type="button" id="generateBtn">Generate CSV</button>
           <button type="button" id="saveBtn">Save</button>
